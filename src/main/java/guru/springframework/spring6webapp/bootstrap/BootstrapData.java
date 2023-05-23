@@ -9,6 +9,8 @@ import guru.springframework.spring6webapp.repositories.PublisherRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 @Component
 public class BootstrapData implements CommandLineRunner {
     private final AuthorRepository authorRepository;
@@ -27,34 +29,40 @@ public class BootstrapData implements CommandLineRunner {
         Author dario = new Author();
         dario.setFirstName("Dario");
         dario.setLastName("Perez");
-
-        Book book1 = new Book();
-        book1.setTitle("Book1");
-        book1.setIsbn("1234");
-
         Author darioSaved = authorRepository.save(dario);
-        Book bookSaved = bookRepository.save(book1);
-
 
         Author rod = new Author();
         rod.setFirstName("Rod");
         rod.setLastName("Johnson");
+        Author rodSaved = authorRepository.save(rod);
+
+
+        Book book1 = new Book();
+        book1.setTitle("Book1");
+        book1.setIsbn("1234");
+        book1.getAuthors().add(darioSaved);
+        Book bookSaved = bookRepository.save(book1);
+
 
         Book book2 = new Book();
         book2.setTitle("Book2");
         book2.setIsbn("123456565");
-
-        Author rodSaved = authorRepository.save(rod);
+        book2.getAuthors().add(rodSaved);
         Book book2Saved = bookRepository.save(book2);
+
 
         Publisher publisher = new Publisher();
         publisher.setPublisherName("SFG Publishing");
         publisher.setCity("St Petersburg");
         publisher.setState("FL");
         publisher.setZip("33701");
-
         Publisher publisherSaved = publisherRepository.save(publisher);
 
+        book2Saved.setPublisher(publisherSaved);
+        bookSaved.setPublisher(publisherSaved);
+
+        bookRepository.save(book2Saved);
+        bookRepository.save(bookSaved);
         darioSaved.getBooks().add(bookSaved);
         rodSaved.getBooks().add(book2Saved);
 
